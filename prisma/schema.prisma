@@ -11,48 +11,58 @@ datasource db {
 }
 
 model User {
-  UserID       Int           @id @default(autoincrement())
-  Username     String
-  Password     String
-  Email        String
-  transactions Transaction[]
-  balances     Balance[]
+  id          String        @id() @default(uuid())
+  name        String
+  username    String
+  hash        String
+  Transaction Transaction[]
+  Balance     Balance[]
+
+  @@map("users")
 }
 
 model ProductCategory {
-  CategoryID   Int           @id @default(autoincrement())
-  CategoryName String
-  products     Product[]
-  Transaction  Transaction[]
+  id          String        @id() @default(uuid())
+  name        String
+  products    Product[]
+  transaction Transaction[]
+
+  @@map("product_categories")
 }
 
 model Product {
-  ProductID   Int             @id @default(autoincrement())
-  ProductName String
-  CategoryID  Int
-  Price       Float
-  category    ProductCategory @relation(fields: [CategoryID], references: [CategoryID])
-  Transaction Transaction[]
+  id          String          @id() @default(uuid())
+  name        String
+  categoryId  String
+  price       Float
+  category    ProductCategory @relation(fields: [categoryId], references: [id])
+  transaction Transaction[]
+
+  @@map("products")
 }
 
 model Transaction {
-  TransactionID   Int              @id @default(autoincrement())
-  UserID          Int
-  ProductID       Int?
-  CategoryID      Int?
-  TransactionType String
-  Amount          Float
-  Date            DateTime
-  Description     String
-  user            User             @relation(fields: [UserID], references: [UserID])
-  product         Product?         @relation(fields: [ProductID], references: [ProductID])
-  category        ProductCategory? @relation(fields: [CategoryID], references: [CategoryID])
+  id              String           @id() @default(uuid())
+  userId          String
+  productId       String?
+  categoryId      String?
+  transactionType String
+  amount          Float
+  date            DateTime
+  description     String
+  user            User             @relation(fields: [userId], references: [id])
+  product         Product?         @relation(fields: [productId], references: [id])
+  category        ProductCategory? @relation(fields: [categoryId], references: [id])
+
+  @@map("transactions")
 }
 
 model Balance {
-  BalanceID Int      @id @default(autoincrement())
-  UserID    Int
-  Amount    Float
-  Date      DateTime
-  user      User     @relation(fields: [UserID], references: [UserID])
+  id     String   @id() @default(uuid())
+  userId String
+  amount Float
+  date   DateTime
+  user   User     @relation(fields: [userId], references: [id])
+
+  @@map("balances")
 }
